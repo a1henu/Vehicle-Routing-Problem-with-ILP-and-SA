@@ -96,7 +96,9 @@
 为了行文方便，我们采用下面记号：
 
 \textit{getNext}： 生成当前状态的邻居。
+
 \textit{getCost}： 计算当前状态的成本。
+
 \textit{accept}： 根据当前状态的成本和温度来决定是否接受邻居。
 
 \subsection{模拟退火算法求解VRP问题}
@@ -143,3 +145,39 @@
     \caption{Simulated Annealing Algorithm for VRP}
 \end{algorithm}
 
+\subsection{模拟退火方法求解CVRP问题}
+
+当我们考虑CVRP问题时，我们需要增加约束条件，即车辆的容量约束。
+
+上文我们提到，我们需要应用\textit{getNext}函数来生成当前状态的邻居，
+但我们在生成邻居时采用了随机的方式，如何保证生成的邻居满足约束条件呢？
+
+我们可以在每次随机时应用\textit{success}函数来判断当前状态是否满足约束条件，如果不满足，则重新生成。
+
+\begin{algorithm}[H]
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+
+    \Input{Current State}
+    \Output{Next State}
+
+    \SetKwFunction{FNext}{getNext}
+    \SetKwProg{Fn}{Function}{:}{end}
+
+    \Fn{\FNext(current\_state)}{
+        next\_state $\leftarrow$ copy of current\_state\;
+        \While{True}{
+            Randomly select two customer points\;
+            current\_state $\leftarrow$ Swap the two customer points or insert one point to another\;
+            \If{success(current\_state)}{
+                break\;
+            }
+        }
+        \Return{current\_state}
+    }
+
+    \caption{Generate Neighbor for VRP}
+\end{algorithm}
+
+那么，无论我们给VRP问题添加什么约束条件，只要我们能够修改\textit{success}函数与其他相关数据结构的定义，
+我们就可以应用一般搜索问题的框架，进而使用模拟退火算法来求解。

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2024.2.24)  25 MAY 2024 20:29
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2024.2.24)  25 MAY 2024 21:03
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -957,25 +957,25 @@ Underfull \hbox (badness 10000) in paragraph at lines 26--39
 
  []
 
-[4] [5] [6] [7] [8] [9]) (./sec/4_sa.tex [10] [11] [12]) (./sec/5_conclusion.tex [13]) (./report.bbl)
+[4] [5] [6] [7] [8] [9]) (./sec/4_sa.tex [10] [11] [12] [13]) (./sec/5_conclusion.tex) (./report.bbl [14])
 
 Package caption Warning: Unused \captionsetup[figure] on input line 35.
 See the caption package documentation for explanation.
 
-[14] (./report.aux)
+[15] (./report.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: D61875BEFCBB7F181916C458258AAB95;2282.
+(rerunfilecheck)             Checksum: DFAA4FC353606523481373F620E26F51;2440.
  ) 
 Here is how much of TeX's memory you used:
- 32055 strings out of 476683
- 679161 string characters out of 5807575
+ 32069 strings out of 476683
+ 679900 string characters out of 5807575
  2097012 words of memory out of 5000000
- 51765 multiletter control sequences out of 15000+600000
+ 51779 multiletter control sequences out of 15000+600000
  524030 words of font info for 111 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  89i,16n,97p,392b,1759s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on report.pdf (14 pages).
+Output written on report.pdf (15 pages).
