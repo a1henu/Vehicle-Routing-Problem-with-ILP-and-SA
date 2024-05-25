@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.io import savemat
+import matplotlib.pyplot as plt
 
 def initModel(map_size: int, city: int, veh: int, offset: int) -> dict:
     """This function initializes a model with random positions for cities and vehicles.
@@ -70,3 +71,12 @@ if __name__ == '__main__':
     maps = model.maps
     """
     savemat('model.mat', model)
+    plt.figure(figsize=(10, 10))
+    plt.scatter(model['x'][:city], model['y'][:city], c='b', label='Cities')
+    plt.scatter(model['x'][city:], model['y'][city:], c='r', label='Vehicles')
+    plt.xlim([0, map_size])
+    plt.ylim([0, map_size])
+    plt.grid(True)
+    plt.legend()
+    plt.title('Map')
+    plt.show()
