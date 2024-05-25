@@ -71,6 +71,8 @@ if __name__ == '__main__':
     maps = model.maps
     """
     savemat('model.mat', model)
+    
+    # Plot the cities and vehicles on the map
     plt.figure(figsize=(10, 10))
     plt.scatter(model['x'][:city], model['y'][:city], c='b', label='Cities')
     plt.scatter(model['x'][city:], model['y'][city:], c='r', label='Vehicles')
