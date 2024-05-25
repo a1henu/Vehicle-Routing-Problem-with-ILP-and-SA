@@ -1,0 +1,66 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\usepackage{ctex}
+\usepackage{amsmath, amsthm, amssymb, graphicx}
+\usepackage{hyperref, cleveref}
+\usepackage{caption}
+
+\usepackage{titling}
+\usepackage[ruled,noline]{algorithm2e}
+\usepackage{algpseudocode}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{courier}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{tikz}
+
+\lstset{
+    breaklines=true,
+    numbers=left, 
+    numberstyle= \tiny, 
+    keywordstyle= \color{ blue!70},
+    commentstyle= \color{red!50!green!50!blue!50}, 
+    frame=shadowbox,
+    rulesepcolor= \color{ red!20!green!20!blue!20},
+    escapeinside=``,
+    xleftmargin=2em,xrightmargin=2em, aboveskip=1em,
+    framexleftmargin=2em,
+    basicstyle=\fontfamily{pcr}\selectfont\small
+} 
+
+\captionsetup[figure]{name=Figure}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\newtheorem{exercise}{Exercise}
+\newtheorem{solution}{Solution}
+
+\title{车辆路径问题： \emph{整数线性规划与搜索方法}}
+\author{
+    白晨旭 \, 褚宸源 \, 檀容韬 \\
+    {\tt\small chenxu.bai@stu.pku.edu.cn}
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\url{}
+
+\input{sec/1_intro.tex}
+\input{sec/2_algo.tex}
+\input{sec/3_ilp.tex}
+\input{sec/4_sa.tex}
+
+\newpage
+{
+    \small
+    \bibliographystyle{plain}
+    \bibliography{main}
+}
+
+\end{document}

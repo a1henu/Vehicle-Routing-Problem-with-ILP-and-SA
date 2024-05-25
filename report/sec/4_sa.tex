@@ -1,0 +1,145 @@
+\section{模拟退火方法求解VRP问题}
+
+\subsection{搜索问题简介}
+
+搜索问题指的是在一个问题空间中寻找解决方案的过程。这个问题空间可以是各种形式的，例如图形、状态集合或搜索树等。搜索问题通常由以下要素构成：
+
+\begin{enumerate}
+    \item 初始状态（Initial State）： 描述问题的起始状态。
+    \item 目标状态（Goal State）： 描述问题的目标或解决方案。
+    \item 操作（Actions）： 定义在每个状态下可以采取的行动或操作。
+    \item 状态转移（State Transition）： 描述从一个状态到另一个状态的转移规则，即在执行某个操作后，如何从一个状态转移到下一个状态。
+    \item 路径成本（Path Cost）： 定义从一个状态到另一个状态的成本。
+\end{enumerate}
+
+对于一般的搜索问题，我们可以先形式化地描述问题，然后使用搜索算法来寻找问题的解决方案。
+
+一般地，搜索算法的目标是找到从初始状态到目标状态的路径，使得路径的成本最小。
+我们通常会从一个初始状态开始，然后通过不断地尝试各种操作，直到找到目标状态为止。
+
+\begin{algorithm}[H]
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+    
+    \Input{Initial State}
+    \Output{A path to the goal state}
+    
+    \While{not reach the goal state}{
+        Choose an action\;
+        Execute the action\;
+        Update the state\;
+    }
+
+    \Return{Path to the goal state}
+
+    \caption{General Search Algorithm}
+\end{algorithm}
+
+\subsection{模拟退火算法}
+
+模拟退火（Simulated Annealing，SA）是一种启发式搜索算法，用于在大规模搜索空间中寻找全局最优解。
+它的灵感来源于固体物理中的退火过程，即通过逐渐降低温度来使得物质达到低能量状态。
+在搜索问题中，"能量"可以被理解为目标函数的值，"温度"控制了搜索过程中接受更差解的概率。
+
+在这个算法中，我们从一个初始状态开始，然后在每一步中生成当前状态的一个邻居。
+如果这个邻居的成本更低，或者即使成本更高但根据当前的温度和成本差异计算出的概率\ref{sec_2:sa_possibility}
+仍然决定接受这个邻居，我们就将当前状态更新为这个邻居。
+然后我们降低温度，并重复这个过程，直到温度降到0为止。最后，我们返回当前状态作为找到的最优解。
+
+我们可以将模拟退火算法的过程简述如下：
+
+\begin{algorithm}[H]
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+    
+    \Input{Initial State, Initial Temperature, Cooling Rate, Cutoff Temperature}
+    \Output{Optimal State}
+    
+    current\_state $\leftarrow$ Initial State\;
+    temperature $\leftarrow$ Initial Temperature\;
+    \While{temperature > Cutoff Temperature}{
+        next\_state $\leftarrow$ Generate a neighbor of current\_state\;
+        cost\_difference $\leftarrow$ Cost of next\_state - Cost of current\_state\;
+        \If{cost\_difference < 0 or exp(-cost\_difference / temperature) > random number between 0 and 1}{
+            current\_state $\leftarrow$ next\_state\;
+        }
+        temperature $\leftarrow$ temperature * Cooling Rate\;
+    }
+
+    \Return{current\_state}
+
+    \caption{Simulated Annealing Algorithm}
+    \label{sa_algo}
+\end{algorithm}
+
+\subsection{VRP问题的搜索问题建模}
+
+对于VRP问题这样的NP-hard问题，我们可以将其建模为一个搜索问题，使用启发式搜索算法来寻找解决方案。
+
+在VRP问题中，我们可以将每个状态定义为一个车辆的路径，每个操作定义为对路径的修改。
+我们可以通过不断地调整车辆的路径，直到找到一个最优的解决方案。
+
+根据\ref{sa_algo}，我们需要定义以下要素：
+
+\begin{enumerate}
+    \item 初始状态： 每个车辆的路径都是从配送中心出发，经过若干客户点，最终回到配送中心。
+    \item 目标状态： 每个车辆的路径都满足约束条件，使得总成本最小。
+    \item 操作： 对车辆的路径进行调整，例如交换两个客户点的顺序。
+    \item 状态转移： 调整车辆的路径。
+    \item 路径成本： 每个车辆的路径的总成本。
+\end{enumerate}
+
+在算法实现中，我们需要确定初始状态的生成方式，确定当前状态的邻居的生成方式，
+确定如何计算当前状态的成本，以及确定如何根据当前状态的成本和温度来决定是否接受邻居。
+
+对于初始状态，我们一般通过随机排列的方式来生成；对于邻居的生成，我们可以通过交换或插入客户点来实现。
+为了行文方便，我们采用下面记号：
+
+\textit{getNext}： 生成当前状态的邻居。
+\textit{getCost}： 计算当前状态的成本。
+\textit{accept}： 根据当前状态的成本和温度来决定是否接受邻居。
+
+\subsection{模拟退火算法求解VRP问题}
+
+有了上文的框架，应用模拟退火求解VRP就变得十分简单了，我们可以直接套用模拟退火算法的框架\ref{sa_algo}，只需要实现上述的三个函数即可。
+
+需要注意的是，由于我们的邻居是通过随机交换或插入客户点来生成的，因此我们不一定在每一轮迭代中都能找到更优的解，
+为了保证算法的收敛性，我们在每一轮退火时都多次搜索迭代邻居，这样可以增加解收敛的概率。
+
+\begin{algorithm}[H]
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+    
+    \Input{Initial State, Initial Temperature, Cooling Rate, Cutoff Temperature}
+    \Output{Optimal State}
+
+    \SetKwFunction{FAc}{Accept}
+    \SetKwProg{Fn}{Function}{:}{end}
+
+    current\_state $\leftarrow$ Initial State\;
+    current\_cost $\leftarrow$ getCost(current\_state)\;
+    temperature $\leftarrow$ Initial Temperature\;
+    \While{temperature > Cutoff Temperature}{
+        \For{$i \leftarrow 1$ \KwTo $N$}{
+            next\_state $\leftarrow$ getNext(current\_state)\;
+            next\_cost $\leftarrow$ getCost(next\_state)\;
+            cost\_diff $\leftarrow$ next\_cost - current\_cost\;
+            \If{accept(cost\_diff, temperature)}{
+                current\_state $\leftarrow$ next\_state\;
+                current\_cost $\leftarrow$ next\_cost\;
+            }
+        }
+        temperature $\leftarrow$ temperature * Cooling Rate\;
+    }
+    \Return{current\_state}
+
+    \Fn{\FAc{cost\_diff, temperature}}{
+        \If{cost\_diff < 0}{
+            \Return{True}
+        }
+        \Return{exp(-cost\_diff / temperature) > random number between 0 and 1}
+    }
+
+    \caption{Simulated Annealing Algorithm for VRP}
+\end{algorithm}
+

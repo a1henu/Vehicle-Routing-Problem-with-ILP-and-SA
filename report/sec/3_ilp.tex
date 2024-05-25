@@ -1,0 +1,222 @@
+\section{整数线性规划法求解VRP问题}
+
+\subsection{问题建模}
+
+\subsubsection{基本车辆路径问题}
+    给定一组客户点、车辆容量、车辆数量、起始点和终点，目标是找到使得所有客户点都被访问一次的最短路径方案。
+    基本车辆路径问题(Vehicle Routing Problem, VRP)的数学模型可以使用整数线性规划(Integer Linear Programming, ILP)来表示。
+    以下是一个简化的VRP模型示例:\\
+    \textbf{\textit{参数}}:\\
+    $n$: 客户点的数量（不包括起始点）\\
+    $m$: 车辆的数量\\
+    $c_{ij}$: 客户点$i$到客户点$j$的距离或成本\\
+    \textbf{\textit{变量}}:\\
+    $x_{ij}^{k}$: 车辆$k$在访问客户点$i$后移动到客户点$j$,则变量$x_{i,j}^k$是1,否则是0.\\
+    \textbf{\textit{目标函数}}:
+    \[\min\sum_{k=1}^{m}\sum_{i=0}^{n}\sum_{j=0}^{n}c_{ij}\cdot x_{ij}^{k}\]
+    \textbf{\textit{约束条件}}:\\
+    1. 每个客户点必须被访问且仅被访问一次:
+    \[\sum_{k=1}^{m}\sum_{j=1}^{n}x_{ij}^{k} = 1, \forall i = 1, \dots, n\]
+    2. 每辆车的路径必须从起始点开始，并在终点结束:
+    \[\sum_{j = 1}^{n}x_{0j}^{k} = 1, \forall k = 1, \dots, m\]
+    \[\sum_{i = 1}^{n}x_{i0}^{k} = 1, \forall k = 1, \dots, m\]
+    3. Binary(0-1)约束:
+    \[x_{ij}^{k}\in \{0, 1\}, \forall i = 0, \dots, n, \forall j = 0, \dots, n, \forall k = 1, \dots, m\]
+\subsubsection{容量限制车辆路径问题(CVRP)}
+与基本VRP类似,但每个客户点有一个特定的需求量,车辆需要满足总容量限制且在不超过容量的情况下为客户提供服务。
+    \\
+    \textbf{\textit{参数}}:\\
+    $n$: 客户点的数量（不包括起始点）\\
+    $m$: 车辆的数量\\
+    $Q$: 每辆车的容量限制\\
+    $d_i$: 客户点$i$的需求量\\
+    $c_{ij}$: 客户点$i$到客户点$j$的距离或成本\\
+    \\
+    \textbf{\textit{变量}}:\\
+    $x_{ij}^{k}$: 车辆$k$在访问客户点$i$后移动到客户点$j$,则变量$x_{i,j}^k$是1,否则是0.\\
+    \\
+    \textbf{\textit{目标函数}}:
+    \[\min\sum_{k=1}^{m}\sum_{i=0}^{n}\sum_{j=0}^{n}c_{ij}\cdot x_{ij}^{k}\]
+    \textbf{\textit{约束条件}}:\\
+    1. 每个客户点必须被访问且仅被访问一次:
+    \[\sum_{k=1}^{m}\sum_{j=1}^{n}x_{ij}^{k} = 1, \forall i = 1, \dots, n\]
+    2. 每辆车的路径必须从起始点开始，并在终点结束:
+    \[\sum_{j = 1}^{n}x_{0j}^{k} = 1, \forall k = 1, \dots, m\]
+    \[\sum_{i = 1}^{n}x_{i0}^{k} = 1, \forall k = 1, \dots, m\]
+    3. 车辆容量限制:
+    \[\sum_{j = 1}^{n}d_{j}\cdot x_{ij}^{k} \leq Q, \forall i = 1, \dots, n, \forall k = 1, \dots, m\]
+    4. Binary(0-1)约束:
+    \[x_{ij}^{k}\in \{0, 1\}, \forall i = 0, \dots, n, \forall j = 0, \dots, n, \forall k = 1, \dots, m\]
+
+\subsection{算法}
+    因为CVRP问题是VRP问题的一个延伸,因此我们在讨论解决ILP问题的算法时可以只讨论对于CVRP问题的算法。
+\subsubsection{数据载入}
+    我们编写了一个简单的python程序来随机生成测试数据, 以便于我们调试代码. 在代码中，我们将所有的城市（客户点）分在了四个区域内，这将有利于后续进行的车辆路线的可视化。
+    代码的输出将会把数据存储在一个相同目录下的$.mat$，我们只需要将数据在$.m$文件中直接将数据导入。
+\subsubsection{数据处理}
+除了现有的$n$个城市,我们还需要考虑货车的出发点,所以需要处理邻接矩阵。矩阵元素$c_{0j}$和$c_{i0}$ 应该填充为0
+    \begin{lstlisting}
+    x = optimvar('x', n+1, n+1, m, 'Type', 'integer', 'LowerBound', 0, 'UpperBound', 1);
+    c_expanded = repmat(c, 1, 1, m);
+    obj = sum(sum(sum(c_expanded .* x)));
+    \end{lstlisting}
+\subsubsection{约束条件}
+    等式约束和不等式约束需要分别进行处理
+    \subsubsection{等式约束}
+    \begin{lstlisting}
+    eq_cons = [];
+    for i = 2:n+1
+        eq_cons = [eq_cons, sum(sum(x(i, 2:n+1, :))) == 1];
+    end
+    for k = 1:m
+        eq_cons = [eq_cons, sum(x(1, 2:n+1, k)) == 1, sum(x(2:n+1, 1, k)) == 1];
+    end
+    \end{lstlisting}
+    \subsubsection{不等式约束}
+    \begin{lstlisting}
+    for i = 2:n+1
+        for k = 1:m
+            ineq_cons = [ineq_cons, sum(d(2:n+1) .* x(i, 2:n+1, k)) <= Q];
+        end
+    end
+    \end{lstlisting}
+\subsubsection{解决ILP问题}
+    在Matlab中，我们可以直接调用intlinprog
+    \begin{lstlisting}
+    prob = optimproblem;
+    prob.Objective = obj;
+    prob.Constraints.Equality = eq_cons;
+    prob.Constraints.Inequality = ineq_cons;
+    options = optimoptions('intlinprog', 'Display', 'off');
+    [sol, fval, exitflag, ~] = solve(prob, 'Options', options);
+    \end{lstlisting}
+\subsection{结果显示}
+    \begin{lstlisting}
+    if (exitflag == 0)
+        disp('No feasible resolution');
+    else
+        routes = cell(1, m);
+        for k = 1:m
+            route = [];
+            for i = 2:n+1
+                for j = 2:n+1
+                    if sol.x(i, j, k) == 1
+                        route = [route, i];
+                        break;
+                    end
+                end
+            end
+            routes{k} = route;
+        end
+        
+        % Total distance
+        totalDistance = fval;
+    end
+    \end{lstlisting}
+\subsection{完整代码}
+    \begin{lstlisting}
+    % Example parameters
+    data = load("final_project/model.mat");
+    n = data.city;
+    m = data.veh;
+    c = data.maps;
+    n = 5; % Number of customer locations (excluding the depot)
+    m = 2; % Number of vehicles
+    Q = 10; % Vehicle capacity constraint
+    d = [0, 1, 1, 1, 1, 1]; % Demand of each customer point (excluding depot)
+    c = [0  17 29 20 21 16;
+         17 0  19 15 17 16;
+         29 19 0  15 18 16;
+         20 15 15 0  22 16;
+         21 17 18 22 0  16
+         16 16 16 16 16 0]; % Distance matrix (including depot)
+        
+    % Call the function
+    [routes, totalDistance] = solve_CVRP(n, m, Q, d, c);
+        
+    % Display Results
+    fprintf('Optimal total distance: %.2f\n', totalDistance);
+    for k = 1:m
+        fprintf('Route for vehicle %d: ', k);
+        fprintf('%d ', routes{k});
+        fprintf('\n');
+    end
+        
+    function [routes, totalDistance] = solve_CVRP(n, m, Q, d, c)
+        % SOLVECVRP Solves the Capacitated Vehicle Routing Problem (CVRP)
+        %
+        % Inputs:
+        %   n - Number of customer locations (excluding the depot)
+        %   m - Number of vehicles
+        %   Q - Vehicle capacity constraint
+        %   d - Demand of each customer point (including depot as 0)
+        %   c - Distance matrix
+        %
+        % Outputs:
+        %   routes - Cell array containing the routes for each vehicle
+        %   totalDistance - Total distance of the optimal solution
+            
+        % Include depot in the demand array if not already included
+        
+        % Decision variables: x(i,j,k) indicates if vehicle k travels from i to j
+        x = optimvar('x', n+1, n+1, m, 'Type', 'integer', 'LowerBound', 0, 'UpperBound', 1);
+        
+        % Expand the distance matrix to match the dimensions of x
+        c_expanded = repmat(c, 1, 1, m);
+            
+        % Objective function: minimize the total distance
+        obj = sum(sum(sum(c_expanded .* x)));
+            
+        % Constraints
+        eq_cons = [];
+        ineq_cons = [];
+            
+        % Constraint 1: Each customer point must be visited exactly once
+        for i = 2:n+1
+            eq_cons = [eq_cons, sum(sum(x(i, 2:n+1, :))) == 1];
+        end
+            
+        % Constraint 2: Each vehicle must start and end at the depot
+        for k = 1:m
+            eq_cons = [eq_cons, sum(x(1, 2:n+1, k)) == 1, sum(x(2:n+1, 1, k)) == 1];
+        end
+            
+        % Constraint 3: Vehicle capacity constraint
+        for i = 2:n+1
+            for k = 1:m
+                ineq_cons = [ineq_cons, sum(d(2:n+1) .* x(i, 2:n+1, k)) <= Q];
+            end
+        end
+        
+        % Solve the problem
+        prob = optimproblem;
+        prob.Objective = obj;
+        prob.Constraints.Equality = eq_cons;
+        prob.Constraints.Inequality = ineq_cons;
+        options = optimoptions('intlinprog', 'Display', 'off');
+        [sol, fval, exitflag, ~] = solve(prob, 'Options', options);
+            
+        % Extract routes
+        if (exitflag == 0)
+            disp('No feasible resolution');
+        else
+            routes = cell(1, m);
+            for k = 1:m
+                route = [];
+                for i = 2:n+1
+                    for j = 2:n+1
+                        if sol.x(i, j, k) == 1
+                            route = [route, i];
+                            break;
+                        end
+                    end
+                end
+                routes{k} = route;
+            end
+                
+            % Total distance
+            totalDistance = fval;
+        end
+    end
+    \end{lstlisting}
+

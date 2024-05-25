@@ -1,0 +1,23 @@
+\begin{thebibliography}{1}
+
+\bibitem{baker2003genetic}
+Barrie~M Baker and MA1951066 Ayechew.
+\newblock A genetic algorithm for the vehicle routing problem.
+\newblock {\em Computers \& Operations Research}, 30(5):787--800, 2003.
+
+\bibitem{bi2022learning}
+Jieyi Bi, Yining Ma, Jiahai Wang, Zhiguang Cao, Jinbiao Chen, Yuan Sun, and Yeow~Meng Chee.
+\newblock Learning generalizable models for vehicle routing problems via knowledge distillation.
+\newblock In {\em Advances in Neural Information Processing Systems}, 2022.
+
+\bibitem{kara2003integer}
+Imdat Kara and Tolga Bektas.
+\newblock Integer linear programming formulation of the generalized vehicle routing problem.
+\newblock In {\em Proc. of the 5-th EURO/INFORMS Joint International Meeting}, pages 06--10. Citeseer Istanbul, 2003.
+
+\bibitem{vincent2017simulated}
+F~Yu Vincent, AAN~Perwira Redi, Yosi~Agustina Hidayat, and Oktaviyanto~Jimat Wibowo.
+\newblock A simulated annealing heuristic for the hybrid vehicle routing problem.
+\newblock {\em Applied Soft Computing}, 53:119--132, 2017.
+
+\end{thebibliography}
