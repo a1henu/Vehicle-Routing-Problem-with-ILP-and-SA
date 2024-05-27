@@ -22,6 +22,8 @@
     \[\sum_{i = 1}^{n}x_{i0}^{k} = 1, \forall k = 1, \dots, m\]
     3. Binary(0-1)约束:
     \[x_{ij}^{k}\in \{0, 1\}, \forall i = 0, \dots, n, \forall j = 0, \dots, n, \forall k = 1, \dots, m\]
+    4. 每辆车不能停留在同一个客户点：
+    \[x_{ii}^k = 0, \forall i = 1, \dots, n+1, \forall k = 1, \dots, m\]
 \subsubsection{容量限制车辆路径问题(CVRP)}
 与基本VRP类似,但每个客户点有一个特定的需求量,车辆需要满足总容量限制且在不超过容量的情况下为客户提供服务。
     \\
@@ -47,6 +49,8 @@
     \[\sum_{j = 1}^{n}d_{j}\cdot x_{ij}^{k} \leq Q, \forall i = 1, \dots, n, \forall k = 1, \dots, m\]
     4. Binary(0-1)约束:
     \[x_{ij}^{k}\in \{0, 1\}, \forall i = 0, \dots, n, \forall j = 0, \dots, n, \forall k = 1, \dots, m\]
+    5. 每辆车不能停留在同一个客户点：
+    \[x_{ii}^k = 0, \forall i = 1, \dots, n+1, \forall k = 1, \dots, m\]
 
 \subsection{算法}
     因为CVRP问题是VRP问题的一个延伸,因此我们在讨论解决ILP问题的算法时可以只讨论对于CVRP问题的算法。
@@ -54,7 +58,7 @@
     我们编写了一个简单的python程序来随机生成测试数据, 以便于我们调试代码. 在代码中，我们将所有的城市（客户点）分在了四个区域内，这将有利于后续进行的车辆路线的可视化。
     代码的输出将会把数据存储在一个相同目录下的$.mat$，我们只需要将数据在$.m$文件中直接将数据导入。
 \subsubsection{数据处理}
-除了现有的$n$个城市,我们还需要考虑货车的出发点,所以需要处理邻接矩阵。矩阵元素$c_{0j}$和$c_{i0}$ 应该填充为0
+除了现有的$n$个城市,我们还需要考虑货车的出发点,所以需要处理邻接矩阵。由于下面的演示示例中车辆起点到每一个客户点的距离已经定义，否则对于n阶方阵c来说，需要添加矩阵元素$c_{0j}$和$c_{i0}$；由于车辆的总数是m，所以要产生m个分量，每一个分量都是一个二维的矩阵$c$。
     \begin{lstlisting}
     x = optimvar('x', n+1, n+1, m, 'Type', 'integer', 'LowerBound', 0, 'UpperBound', 1);
     c_expanded = repmat(c, 1, 1, m);
@@ -71,9 +75,15 @@
     for k = 1:m
         eq_cons = [eq_cons, sum(x(1, 2:n+1, k)) == 1, sum(x(2:n+1, 1, k)) == 1];
     end
+    for i = 1:n+1
+        for k = 1:m
+            eq_cons = [eq_cons, x(i, i, k) == 0];
+        end
+    end
     \end{lstlisting}
     \subsubsection{不等式约束}
     \begin{lstlisting}
+    ineq_cons = [];
     for i = 2:n+1
         for k = 1:m
             ineq_cons = [ineq_cons, sum(d(2:n+1) .* x(i, 2:n+1, k)) <= Q];
@@ -188,6 +198,13 @@
             end
         end
         
+        % Constraint 4: Ensure x_ii^k = 0 for all i and k
+        for i = 1:n+1
+            for k = 1:m
+                eq_cons = [eq_cons, x(i, i, k) == 0];
+            end
+        end
+
         % Solve the problem
         prob = optimproblem;
         prob.Objective = obj;
