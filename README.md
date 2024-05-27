@@ -1,6 +1,6 @@
 # Vehicle-Routing-Problem-with-ILP-and-SA
 
-This project is the final project for the course "Numerical Methods-Principles, Algorithms and Applications"(00136540) at School of Mathematical Sciences, Peking University. It contains implementations of two algorithms to solve the Vehicle Routing Problem (VRP): Integer Linear Programming (ILP) and Simulated Annealing (SA). The project is structured into two main directories: CVRP_Simulated_Annealing, VRP_Simulated_Annealing and CVRP_Integer_Linear_Programming.
+This project is the final project for the course "Numerical Methods-Principles, Algorithms and Applications"(00136540) at School of Mathematical Sciences, Peking University. It contains implementations of two algorithms to solve the Vehicle Routing Problem (VRP): Integer Linear Programming (ILP) and Simulated Annealing (SA). The project is structured into three main directories: CVRP_Simulated_Annealing, VRP_Simulated_Annealing and CVRP_Integer_Linear_Programming.
 
 ## Directory Structure
 CVRP_Integer_Linear_Programming: Contains MATLAB scripts for the Capacitated Vehicle Routing Problem (CVRP) using Integer Linear Programming (ILP).
