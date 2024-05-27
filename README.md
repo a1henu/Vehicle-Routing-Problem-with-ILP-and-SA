@@ -1,8 +1,9 @@
 # Vehicle-Routing-Problem-with-ILP-and-SA
 
-This project is the final project for the course "Numerical Methods-Principles, Algorithms and Applications"(00136540) at School of Mathematical Sciences, Peking University. It contains implementations of two algorithms to solve the Vehicle Routing Problem (VRP): Integer Linear Programming (ILP) and Simulated Annealing (SA). The project is structured into two main directories: CVRP_Simulated_Annealing and VRP_Simulated_Annealing.
+This project is the final project for the course "Numerical Methods-Principles, Algorithms and Applications"(00136540) at School of Mathematical Sciences, Peking University. It contains implementations of two algorithms to solve the Vehicle Routing Problem (VRP): Integer Linear Programming (ILP) and Simulated Annealing (SA). The project is structured into two main directories: CVRP_Simulated_Annealing, VRP_Simulated_Annealing and CVRP_Integer_Linear_Programming.
 
 ## Directory Structure
+CVRP_Integer_Linear_Programming: Contains MATLAB scripts for the Capacitated Vehicle Routing Problem (CVRP) using Integer Linear Programming (ILP).
 CVRP_Simulated_Annealing: Contains MATLAB scripts for the Capacitated Vehicle Routing Problem (CVRP) using Simulated Annealing.
 VRP_Simulated_Annealing: Contains MATLAB scripts for the Vehicle Routing Problem (VRP) using Simulated Annealing.
 report: Contains the LaTeX source files for the project report.
@@ -10,7 +11,7 @@ Running the Code
 To run the code, you need to have MATLAB installed on your machine. Open the MATLAB scripts in the CVRP_Simulated_Annealing or VRP_Simulated_Annealing directories and run them.
 
 ## Report
-The report provides a detailed explanation of the problem, the implemented algorithms, and the results. It is written in LaTeX and can be compiled using a LaTeX compiler.
+The report provides a detailed explanation of the problem, the implemented algorithms, and the results. It is written in LaTeX and can be compiled using xe-bib-xe-xe recipe.
 
 ## References
 The project is based on the following papers:
